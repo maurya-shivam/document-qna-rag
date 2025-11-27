@@ -1,4 +1,4 @@
-# UPS Document Q&A with Gemini and Qdrant
+# Document Q&A with Gemini and Qdrant
 
 This project implements a simple Retrieval-Augmented Generation (RAG) pipeline using Python, LangChain, Gemini (as the LLM), and Qdrant (as the vector database). It includes a Streamlit UI for interactive questioning.
 
