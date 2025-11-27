@@ -50,24 +50,16 @@ This project implements a simple Retrieval-Augmented Generation (RAG) pipeline u
 Create a `.env` file in the root directory of the project and add your Google API key and Qdrant details:
 ```
 GOOGLE_API_KEY=YOUR_API_KEY
-QDRANT_HOST=http://127.0.0.1:6333
-QDRANT_API_KEY=77028a63-1b55-4b6f-8a78-bf5b14063633
+QDRANT_HOST=QDRANT_HOST
+QDRANT_API_KEY=QDRANT_API_KEY
 ```
 Replace `YOUR_API_KEY` with your actual Google API key. The Qdrant host and API key are provided by the user.
 
 ### 5. Run Qdrant Vector Database
 
-Ensure Docker is running. Qdrant should be accessible at `http://127.0.0.1:6333` with the provided API key.
+Ensure Docker is running. Qdrant should be accessible at `http://localhost:6333` with the provided API key.
 
-### 6. Ingest Document (Optional, via `ingest.py`)
-
-You can ingest a PDF document using the `ingest.py` script. Place your PDF document in the `./data/` directory. The default filename expected by `ingest.py` is `sample.pdf`. If your file has a different name, update the `PDF_PATH` variable in `ingest.py` accordingly.
-
-To ingest the document and populate the Qdrant vector store:
-```bash
-python3 ingest.py
-```
-Alternatively, you can upload and ingest documents directly through the Streamlit UI.
+you can upload and ingest documents directly through the Streamlit UI.
 
 ### 7. Run the Streamlit Application
 
