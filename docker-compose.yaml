@@ -1,0 +1,27 @@
+name: document-QnA
+
+services:
+  DocumentQnARAG:
+    build: .
+    image: document-qna-rag:0.1.0
+    container_name: document-qna
+    env_file:
+      - .env
+    restart: always
+    # ports:
+    #   - 5007:80
+    network_mode: "host"
+    # networks:
+    #   - document-qna
+    # volumes:
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 500M
+
+networks:
+  document-qna:
+    driver: bridge
+  dbs-and-caches:
+    external: true

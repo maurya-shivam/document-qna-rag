@@ -2,16 +2,15 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 load_dotenv()
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_ollama import OllamaEmbeddings
-# from langchain_community.embeddings import OllamaEmbeddings
-# from langchain_community.vectorstores import Qdrant
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 
+'''
+Custom Imports
+'''
 from src.modules.ingest import ingest_document_to_qdrant
 
 # Load environment variables
@@ -19,6 +18,7 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 QDRANT_HOST = os.getenv("QDRANT_HOST")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 COLLECTION_NAME = "ups_document_qna"
+
 
 # ------- Cached Vector Store -------
 @st.cache_resource
@@ -32,6 +32,7 @@ def get_vector_store():
         embedding=embeddings
     )
 
+
 # ------- Cached Gemini LLM -------
 @st.cache_resource
 def get_llm():
@@ -43,10 +44,15 @@ def get_llm():
 
 
 def simple_rag(question, vector_store, llm):
-    # Create retriever (avoid `client.search` error)
+    # Create retriever
+    # retriever = vector_store.as_retriever(
+    #     search_type="similarity",
+    #     search_kwargs={"k": 5, "score_threshold": 0.8}
+    # )
+
     retriever = vector_store.as_retriever(
-        search_type="similarity",
-        search_kwargs={"k": 5}
+        search_type="similarity_score_threshold",
+        search_kwargs={"k": 5, "score_threshold": 0.8}
     )
     # 1. Retrieve chunks
     docs = retriever._get_relevant_documents(query=question, run_manager=None)
@@ -55,6 +61,7 @@ def simple_rag(question, vector_store, llm):
     context = "\n\n".join(d.page_content for d in docs)
 
     prompt = f"""
+You are an helpful QnA chatbot, you are proficient in answering user queries from the give context.
 Use ONLY the context below to answer the question.
 
 Context:
@@ -63,6 +70,9 @@ Context:
 Question: {question}
 
 Answer:
+Note: 
+- If the question is not related to the context then tell user the information is not in the context and ask a short follow-up quesiton
+- if user is not asking for any information then chat with user if needed with short responses. Be gentle and polite.
 """
 
     # 3. Call LLM
@@ -78,7 +88,7 @@ Answer:
 
 def main():
     st.set_page_config(page_title="Simple RAG with Gemini & Qdrant")
-    st.header("UPS Document Q&A (Simple RAG) 💬")
+    st.header("Document Q&A (Simple RAG) 💬")
 
     st.subheader("Upload Document for Context")
     uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
