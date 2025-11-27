@@ -68,4 +68,11 @@ Launch the Streamlit UI:
 streamlit run app.py
 ```
 
+### 8. Run as a Docker container
+
+Build and run docker container with docker compose
+```bash
+docker compose up -d --build
+```
+
 This will open the application in your web browser. You can now upload PDF documents directly through the UI for ingestion into Qdrant, and then ask questions about the ingested documents.
